@@ -4,7 +4,7 @@ namespace CmlLib.Core.Installer.NeoForge;
 
 public class NeoForgeMapper
 {
-    private static readonly Regex argBracket = new Regex(@"\$?\{(.*?)}");
+    private static readonly Regex argBracket = new(@"\$?\{(.*?)}");
 
     public static IEnumerable<string> Map(IEnumerable<string> arg, IReadOnlyDictionary<string, string?> dicts, string prepath)
     {
@@ -36,7 +36,7 @@ public class NeoForgeMapper
                 extension = innerStr[1];
 
             return Path.Combine(prepath,
-                PackageName.Parse(pathName).GetPath(null, extension));
+                NeoForgePackageName.GetPath(pathName, extension, Path.DirectorySeparatorChar));
         }
         else if (str.StartsWith("\'") && str.EndsWith("\'"))
             return str.Trim('\'');
@@ -54,8 +54,7 @@ public class NeoForgeMapper
             var key = match.Groups[1].Value;
             if (dicts.TryGetValue(key, out string? value))
             {
-                if (value == null)
-                    value = "";
+                value ??= "";
 
                 return value;
             }
