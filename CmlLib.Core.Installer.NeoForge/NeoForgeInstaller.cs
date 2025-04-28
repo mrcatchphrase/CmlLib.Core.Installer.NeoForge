@@ -1,8 +1,7 @@
-﻿using CmlLib.Core.Installer.Forge.Versions;
+﻿using CmlLib.Core.Installer.NeoForge.Installers;
 using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
 using CmlLib.Core.Version;
-using System.Diagnostics;
 
 namespace CmlLib.Core.Installer.NeoForge;
 

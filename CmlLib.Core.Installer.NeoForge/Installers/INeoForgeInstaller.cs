@@ -1,7 +1,7 @@
 using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
 
-namespace CmlLib.Core.Installer.NeoForge;
+namespace CmlLib.Core.Installer.NeoForge.Installers;
 
 public interface INeoForgeInstaller
 {

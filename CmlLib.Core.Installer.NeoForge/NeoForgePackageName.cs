@@ -1,6 +1,6 @@
-﻿namespace CmlLib.Core.Installer.Forge;
+﻿namespace CmlLib.Core.Installer.NeoForge;
 
-public class ForgePackageName
+public class NeoForgePackageName
 {
     public static string GetPath(string name, char directorySeparator)
     {

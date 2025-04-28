@@ -1,20 +1,14 @@
 ﻿using CmlLib.Core.Installers;
 using CmlLib.Core.ProcessBuilder;
-using CmlLib.Utils;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
-namespace CmlLib.Core.Installer.NeoForge;
+namespace CmlLib.Core.Installer.NeoForge.Installers;
 
-public class NeoForgeInstallProcessor
+public class NeoForgeInstallProcessor(string javaPath)
 {
-    private readonly string _javaPath;
-
-    public NeoForgeInstallProcessor(string javaPath)
-    {
-        _javaPath = javaPath;
-    }
+    private readonly string _javaPath = javaPath;
 
     public async Task MapAndStartProcessors(
         string installerDir, 
@@ -28,7 +22,7 @@ public class NeoForgeInstallProcessor
         if (installProfile.TryGetProperty("data", out var dataProp))
             mapData = MapProcessorData(dataProp, vanillaJarPath, libraryPath, installerDir);
         else
-            mapData = new();
+            mapData = [];
 
         if (installProfile.TryGetProperty("processors", out var processorsProp))
             await StartProcessors(processorsProp, mapData, libraryPath, progress, processorOutput);
@@ -86,9 +80,7 @@ public class NeoForgeInstallProcessor
                 checkProcessorOutputs(outputs, mapData);
 
             var isClientSide =
-                processor.TryGetProperty("sides", out var sides) ?
-                checkClientSides(sides) :
-                true;
+                !processor.TryGetProperty("sides", out var sides) || checkClientSides(sides);
 
             if (!isProcessed && isClientSide)
                 await startProcessor(processor, mapData, libraryPath, processorOutput);
@@ -145,8 +137,7 @@ public class NeoForgeInstallProcessor
             return;
 
         // jar
-        var jar = PackageName.Parse(name);
-        var jarPath = Path.Combine(libraryPath, jar.GetPath());
+        var jarPath = Path.Combine(libraryPath, NeoForgePackageName.GetPath(name, Path.DirectorySeparatorChar));
         var jarFile = new JarFile(jarPath);
         var jarManifest = jarFile.GetManifest();
 
@@ -168,7 +159,7 @@ public class NeoForgeInstallProcessor
                     continue;
 
                 var lib = Path.Combine(libraryPath,
-                    PackageName.Parse(libNameString).GetPath());
+                    NeoForgePackageName.GetPath(libNameString, Path.DirectorySeparatorChar));
                 lib = lib.Replace("@jar", "");
                 
                 classpath.Add(lib);
@@ -205,11 +196,13 @@ public class NeoForgeInstallProcessor
             argBuilder.Append(arg);
         }
 
-        var process = new Process();
-        process.StartInfo = new ProcessStartInfo()
+        var process = new Process
         {
-            FileName = _javaPath,
-            Arguments = argBuilder.ToString(),
+            StartInfo = new ProcessStartInfo()
+            {
+                FileName = _javaPath,
+                Arguments = argBuilder.ToString(),
+            }
         };
 
         var p = new ProcessWrapper(process);

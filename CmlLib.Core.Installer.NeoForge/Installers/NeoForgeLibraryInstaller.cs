@@ -7,21 +7,14 @@ using System.Text.Json;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 
-public class NeoForgeLibraryInstaller
+public class NeoForgeLibraryInstaller(
+    IGameInstaller installer,
+    RulesEvaluatorContext context,
+    string libraryServer)
 {
-    private readonly RulesEvaluatorContext _rulesContext;
-    private readonly IGameInstaller _installer;
-    private readonly string _libraryServer;
-
-    public NeoForgeLibraryInstaller(
-        IGameInstaller installer, 
-        RulesEvaluatorContext context, 
-        string libraryServer)
-    {
-        _installer = installer;
-        _rulesContext = context;
-        _libraryServer = libraryServer;
-    }
+    private readonly RulesEvaluatorContext _rulesContext = context;
+    private readonly IGameInstaller _installer = installer;
+    private readonly string _libraryServer = libraryServer;
 
     public async Task Install(
         MinecraftPath path, 

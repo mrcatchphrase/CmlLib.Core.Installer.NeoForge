@@ -1,20 +1,13 @@
 ﻿using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
-using CmlLib.Utils;
 using System.Text.Json;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 
-public class NeoForgeDefaultInstaller : INeoForgeInstaller
+public class NeoForgeDefaultInstaller(string versionName, NeoForgeVersion neoforgeVersion) : INeoForgeInstaller
 {
-    public NeoForgeDefaultInstaller(string versionName, NeoForgeVersion neoforgeVersion)
-    {
-        VersionName = versionName;
-        NeoForgeVersion = neoforgeVersion;
-    }
-
-    public string VersionName { get; }
-    public NeoForgeVersion NeoForgeVersion { get; }
+    public string VersionName { get; } = versionName;
+    public NeoForgeVersion NeoForgeVersion { get; } = neoforgeVersion;
 
     public async Task Install(MinecraftPath path, IGameInstaller installer, NeoForgeInstallOptions options)
     {
@@ -29,10 +22,10 @@ public class NeoForgeDefaultInstaller : INeoForgeInstaller
         await extractMavens(extractor.ExtractedDir, path);
         await installLibraries(installerProfile.RootElement, path, installer, options);
         await processor.MapAndStartProcessors(
-            extractor.ExtractedDir, 
-            path.GetVersionJarPath(NeoForgeVersion.MinecraftVersionName), 
-            path.Library, 
-            installerProfile.RootElement, 
+            extractor.ExtractedDir,
+            path.GetVersionJarPath(NeoForgeVersion.MinecraftVersionName),
+            path.Library,
+            installerProfile.RootElement,
             options.FileProgress,
             options.InstallerOutput);
         await copyVersionFiles(extractor.ExtractedDir, path);
@@ -71,7 +64,6 @@ public class NeoForgeDefaultInstaller : INeoForgeInstaller
         IOUtil.CreateDirectoryForFile(versionJsonDest);
         await IOUtil.CopyFileAsync(versionJsonSource, versionJsonDest);
 
-        var m = NeoForgeVersion.MinecraftVersionName;
         var f = NeoForgeVersion.NeoForgeVersionName;
         var jar = Path.Combine(installerDir, $"maven/net/neoforged/neoforge/{f}/neoforge-{f}.jar");
         if (File.Exists(jar)) //fix 1.17+ 
