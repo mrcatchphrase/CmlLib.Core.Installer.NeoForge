@@ -1,4 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Versions;
 
@@ -27,7 +31,6 @@ public class NeoForgeVersionLoader(HttpClient httpClient)
                 MD5 = $"https://maven.neoforged.net/releases/net/neoforged/neoforge/{neoForgeVersion}/neoforge-{neoForgeVersion}-installer.jar.md5",
                 SHA1 = $"https://maven.neoforged.net/releases/net/neoforged/neoforge/{neoForgeVersion}/neoforge-{neoForgeVersion}-installer.jar.sha1"
             }
-
         };
     }
 }

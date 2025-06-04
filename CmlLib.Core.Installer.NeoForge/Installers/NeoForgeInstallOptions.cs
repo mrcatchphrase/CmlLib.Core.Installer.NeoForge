@@ -1,5 +1,7 @@
 using CmlLib.Core.Installers;
 using CmlLib.Core.Rules;
+using System;
+using System.Threading;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 

@@ -2,57 +2,56 @@
 using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
 using CmlLib.Core.Version;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge;
 
-public class NeoForgeInstaller
+public class NeoForgeInstaller(MinecraftLauncher launcher)
 {
-    private readonly MinecraftLauncher _launcher;
-    private readonly INeoForgeInstallerVersionMapper _installerMapper;
-    private readonly NeoForgeVersionLoader _versionLoader;
+    private readonly MinecraftLauncher _launcher = launcher;
+    private readonly INeoForgeInstallerVersionMapper _installerMapper = new NeoForgeInstallerVersionMapper();
+    private readonly NeoForgeVersionLoader _versionLoader = new(new HttpClient());
 
-    public NeoForgeInstaller(MinecraftLauncher launcher)
-    {
-        _installerMapper = new NeoForgeInstallerVersionMapper();
-        _versionLoader = new NeoForgeVersionLoader(new HttpClient());
-        _launcher = launcher;
-    }
-
-    public Task<string> Install(string mcVersion, string forgeVersion) =>
-        Install(mcVersion, forgeVersion, new NeoForgeInstallOptions());
+    public Task<string> Install(string mcVersion, string neoForgeVersion) =>
+        Install(mcVersion, neoForgeVersion, new NeoForgeInstallOptions());
 
     public async Task<string> Install(
         string mcVersion,
-        string forgeVersion,
+        string neoForgeVersion,
         NeoForgeInstallOptions options)
     {
-        var version = _versionLoader.GetNeoForgeVersionFile(mcVersion, forgeVersion);
+        var version = _versionLoader.GetNeoForgeVersionFile(mcVersion, neoForgeVersion);
 
         return await Install(version, options);
     }
 
     public async Task<string> Install(
-        NeoForgeVersion forgeVersion,
+        NeoForgeVersion neoForgeVersion,
         NeoForgeInstallOptions options)
     {
-        var installer = _installerMapper.CreateInstaller(forgeVersion);
-        if (options.SkipIfAlreadyInstalled && await checkVersionInstalled(installer.VersionName))
+        neoForgeVersion = _versionLoader.GetNeoForgeVersionFile(neoForgeVersion.MinecraftVersionName, neoForgeVersion.NeoForgeVersionName);
+        var installer = _installerMapper.CreateInstaller(neoForgeVersion);
+        if (options.SkipIfAlreadyInstalled && await CheckVersionInstalled(installer.VersionName))
             return installer.VersionName;
 
-        var version = await checkAndDownloadVanillaVersion(
-            forgeVersion.MinecraftVersionName,
+        var version = await CheckAndDownloadVanillaVersion(
+            neoForgeVersion.MinecraftVersionName,
             options.FileProgress,
             options.ByteProgress);
 
         if (string.IsNullOrEmpty(options.JavaPath))
-            options.JavaPath = getJavaPath(version);
+            options.JavaPath = GetJavaPath(version);
 
         await installer.Install(_launcher.MinecraftPath, _launcher.GameInstaller, options);
         await _launcher.GetAllVersionsAsync();
         return installer.VersionName;
     }
 
-    private async Task<IVersion> checkAndDownloadVanillaVersion(
+    private async Task<IVersion> CheckAndDownloadVanillaVersion(
         string mcVersion,
         IProgress<InstallerProgressChangedEventArgs>? fileProgress,
         IProgress<ByteProgress>? byteProgress)
@@ -62,7 +61,7 @@ public class NeoForgeInstaller
         return version;
     }
 
-    private async Task<bool> checkVersionInstalled(string versionName)
+    private async Task<bool> CheckVersionInstalled(string versionName)
     {
         try
         {
@@ -75,7 +74,7 @@ public class NeoForgeInstaller
         }
     }
 
-    private string getJavaPath(IVersion version)
+    private string GetJavaPath(IVersion version)
     {
         var javaPath = _launcher.GetJavaPath(version);
         if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))

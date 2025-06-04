@@ -1,4 +1,10 @@
-﻿namespace CmlLib.Core.Installer.NeoForge;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CmlLib.Core.Installer.NeoForge;
 
 internal static class IOUtil
 {
@@ -61,10 +67,10 @@ internal static class IOUtil
         if (!dir.Exists)
             return;
 
-        await copyDirectoryFiles(org, des, "");
+        await CopyDirectoryFiles(org, des, "");
     }
 
-    private static async Task copyDirectoryFiles(string org, string des, string path)
+    private static async Task CopyDirectoryFiles(string org, string des, string path)
     {
         var orgpath = Path.Combine(org, path);
         var orgdir = new DirectoryInfo(orgpath);
@@ -76,7 +82,7 @@ internal static class IOUtil
         foreach (var dir in orgdir.GetDirectories("*", SearchOption.TopDirectoryOnly))
         {
             var innerpath = Path.Combine(path, dir.Name);
-            await copyDirectoryFiles(org, des, innerpath);
+            await CopyDirectoryFiles(org, des, innerpath);
         }
 
         foreach (var file in orgdir.GetFiles("*", SearchOption.TopDirectoryOnly))

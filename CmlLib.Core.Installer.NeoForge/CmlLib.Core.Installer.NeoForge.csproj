@@ -4,14 +4,13 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<OutputType>Library</OutputType>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<Version>0.0.1</Version>
 		<Description>Minecraft NeoForge Installer</Description>
-		<Copyright>Copyright (c) 2023 CmlLib</Copyright>
+		<Copyright>Copyright (c) 2025 CmlLib</Copyright>
 		<PackageProjectUrl>https://github.com/mrcatchphrase/CmlLib.Core.Installer.NeoForge</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/mrcatchphrase/CmlLib.Core.Installer.NeoForge</RepositoryUrl>
 		<PackageIcon>icon.png</PackageIcon>
