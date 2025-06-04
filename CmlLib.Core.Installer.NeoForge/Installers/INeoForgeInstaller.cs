@@ -1,5 +1,6 @@
 using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 

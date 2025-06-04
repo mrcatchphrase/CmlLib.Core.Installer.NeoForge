@@ -3,7 +3,12 @@ using CmlLib.Core.Files;
 using CmlLib.Core.Installers;
 using CmlLib.Core.Rules;
 using CmlLib.Core.Version;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 

@@ -22,9 +22,8 @@ var neoForge = new NeoForgeInstaller(launcher);
 var loader = new NeoForgeVersionLoader(new());
 
 var versions = await loader.GetNeoForgeVersionsAsync();
-var version = versions.First(x => x.MinecraftVersionName == "1.21.5" && x.NeoForgeVersionName == "21.5");
+var version = versions.First(x => x.MinecraftVersionName == "1.20.4" && x.NeoForgeVersionName == "20.4.248");
 //OR var version = versions.Last(); // latest NeoForgeVersion
-
 var version_name = await neoForge.Install(version, new NeoForgeInstallOptions
 {
     FileProgress = fileProgress,
@@ -37,7 +36,7 @@ var version_name = await neoForge.Install(version, new NeoForgeInstallOptions
 //Start Minecraft
 var launchOption = new MLaunchOption
 {
-    MaximumRamMb = 1024,
+    MaximumRamMb = 2048,
     Session = MSession.CreateOfflineSession("GodAlphaBs"),
 };
 

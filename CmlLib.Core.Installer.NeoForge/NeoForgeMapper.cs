@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace CmlLib.Core.Installer.NeoForge;
 
@@ -78,18 +80,18 @@ public class NeoForgeMapper
         {
             var s = input.Split('=');
 
-            if (s[1].Contains(" ") && !checkEmptyHandled(s[1]))
+            if (s[1].Contains(" ") && !CheckEmptyHandled(s[1]))
                 return s[0] + "=\"" + s[1] + "\"";
             else
                 return input;
         }
-        else if (input.Contains(" ") && !checkEmptyHandled(input))
+        else if (input.Contains(" ") && !CheckEmptyHandled(input))
             return "\"" + input + "\"";
         else
             return input;
     }
 
-    static bool checkEmptyHandled(string str)
+    static bool CheckEmptyHandled(string str)
     {
         return str.StartsWith("\"") || str.EndsWith("\"");
     }

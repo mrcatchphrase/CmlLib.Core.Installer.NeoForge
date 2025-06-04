@@ -10,6 +10,6 @@ public class NeoForgeInstallerVersionMapper : INeoForgeInstallerVersionMapper
     public INeoForgeInstaller CreateInstaller(NeoForgeVersion version)
     {
         var f = version.NeoForgeVersionName;
-        return CreateDefaultInstaller($"neoforge-{f}", version);         
+        return CreateDefaultInstaller($"neoforge-{f}", version);
     }
 }

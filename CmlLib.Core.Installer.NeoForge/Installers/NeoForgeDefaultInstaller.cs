@@ -1,6 +1,9 @@
 ﻿using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
+using System;
+using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 
@@ -19,8 +22,8 @@ public class NeoForgeDefaultInstaller(string versionName, NeoForgeVersion neofor
         using var installerProfileStream = extractor.OpenInstallerProfile();
         using var installerProfile = await JsonDocument.ParseAsync(installerProfileStream);
 
-        await extractMavens(extractor.ExtractedDir, path);
-        await installLibraries(installerProfile.RootElement, path, installer, options);
+        await ExtractMavens(extractor.ExtractedDir, path);
+        await InstallLibraries(installerProfile.RootElement, path, installer, options);
         await processor.MapAndStartProcessors(
             extractor.ExtractedDir,
             path.GetVersionJarPath(NeoForgeVersion.MinecraftVersionName),
@@ -28,17 +31,17 @@ public class NeoForgeDefaultInstaller(string versionName, NeoForgeVersion neofor
             installerProfile.RootElement,
             options.FileProgress,
             options.InstallerOutput);
-        await copyVersionFiles(extractor.ExtractedDir, path);
+        await CopyVersionFiles(extractor.ExtractedDir, path);
     }
 
-    private async Task extractMavens(string installerPath, MinecraftPath minecraftPath)
+    private async Task ExtractMavens(string installerPath, MinecraftPath minecraftPath)
     {
         var org = Path.Combine(installerPath, "maven");
         if (Directory.Exists(org))
             await IOUtil.CopyDirectory(org, minecraftPath.Library);
     }
 
-    private async Task installLibraries(
+    private async Task InstallLibraries(
         JsonElement installerProfile,
         MinecraftPath path,
         IGameInstaller installer,
@@ -57,7 +60,7 @@ public class NeoForgeDefaultInstaller(string versionName, NeoForgeVersion neofor
         }
     }
 
-    private async Task copyVersionFiles(string installerDir, MinecraftPath minecraftPath)
+    private async Task CopyVersionFiles(string installerDir, MinecraftPath minecraftPath)
     {
         var versionJsonSource = Path.Combine(installerDir, "version.json");
         var versionJsonDest = minecraftPath.GetVersionJsonPath(VersionName);

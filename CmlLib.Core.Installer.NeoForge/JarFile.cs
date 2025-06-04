@@ -1,16 +1,13 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace CmlLib.Core.Installer.NeoForge;
 
-internal class JarFile
+internal class JarFile(string path)
 {
-    public JarFile(string path)
-    {
-        this.Path = path;
-    }
-
-    public string Path { get; private set; }
+    public string Path { get; private set; } = path;
 
     public Dictionary<string, string?>? GetManifest()
     {
@@ -24,7 +21,7 @@ internal class JarFile
             {
                 if (e.Name == "META-INF/MANIFEST.MF")
                 {
-                    manifest = readStreamString(s);
+                    manifest = ReadStreamString(s);
                     break;
                 }
             }
@@ -57,7 +54,7 @@ internal class JarFile
         return dict;
     }
 
-    private static string readStreamString(Stream s)
+    private static string ReadStreamString(Stream s)
     {
         var str = new StringBuilder();
         var buffer = new byte[1024];

@@ -1,8 +1,13 @@
 ﻿using CmlLib.Core.Installers;
 using CmlLib.Core.ProcessBuilder;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 
@@ -77,20 +82,20 @@ public class NeoForgeInstallProcessor(string javaPath)
 
             var isProcessed = 
                 processor.TryGetProperty("outputs", out var outputs) &&
-                checkProcessorOutputs(outputs, mapData);
+                CheckProcessorOutputs(outputs, mapData);
 
             var isClientSide =
-                !processor.TryGetProperty("sides", out var sides) || checkClientSides(sides);
+                !processor.TryGetProperty("sides", out var sides) || CheckClientSides(sides);
 
             if (!isProcessed && isClientSide)
-                await startProcessor(processor, mapData, libraryPath, processorOutput);
+                await StartProcessor(processor, mapData, libraryPath, processorOutput);
 
             progressed++;
             fileProgress?.Report(new InstallerProgressChangedEventArgs(count, progressed, name, InstallerEventType.Done));
         }
     }
 
-    private bool checkProcessorOutputs(JsonElement outputs, Dictionary<string, string?> mapData)
+    private bool CheckProcessorOutputs(JsonElement outputs, Dictionary<string, string?> mapData)
     {
         if (outputs.ValueKind == JsonValueKind.Object)
         {
@@ -107,7 +112,7 @@ public class NeoForgeInstallProcessor(string javaPath)
         return true;
     }
 
-    private bool checkClientSides(JsonElement sides)
+    private bool CheckClientSides(JsonElement sides)
     {
         if (sides.ValueKind == JsonValueKind.Array)
         {
@@ -123,7 +128,7 @@ public class NeoForgeInstallProcessor(string javaPath)
         return true;
     }
 
-    private async Task startProcessor(
+    private async Task StartProcessor(
         JsonElement processor, 
         Dictionary<string, string?> mapData, 
         string libraryPath,
@@ -176,10 +181,10 @@ public class NeoForgeInstallProcessor(string javaPath)
             args = NeoForgeMapper.Map(arrStrs, mapData, libraryPath);
         }
 
-        await startJava(classpath, mainClass, args, processorOutput);
+        await StartJava(classpath, mainClass, args, processorOutput);
     }
 
-    private async Task startJava(
+    private async Task StartJava(
         IEnumerable<string> classpath, 
         string mainClass, 
         IEnumerable<string> args, 

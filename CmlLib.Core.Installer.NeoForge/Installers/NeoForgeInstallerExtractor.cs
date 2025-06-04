@@ -2,6 +2,10 @@
 using CmlLib.Core.Installer.NeoForge.Versions;
 using CmlLib.Core.Installers;
 using ICSharpCode.SharpZipLib.Zip;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CmlLib.Core.Installer.NeoForge.Installers;
 
@@ -11,6 +15,7 @@ public class NeoForgeInstallerExtractor : IDisposable
     {
         var installDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()); //create folder in temp
         var installerJar = Path.Combine(installDir, "installer.jar");
+        Debug.WriteLine(version.NeoForgeVersionName);
         var installerUrl = version.GetInstallerFile()?.DirectUrl;
         if (string.IsNullOrEmpty(installerUrl))
             throw new InvalidOperationException("The neoforge version doesn't have installer url");
